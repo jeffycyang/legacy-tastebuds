@@ -8,7 +8,7 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
   <!--put stylesheets here-->
   <style>
   html {
@@ -22,6 +22,122 @@
   </style>
 </head>
 <body style="text-align: center">
+
+  <script>
+    var xhttp=new XMLHttpRequest();
+
+    // This is called with the results from from FB.getLoginStatus().
+    function statusChangeCallback(response) {
+      console.log('statusChangeCallback');
+      console.log(response);
+      //console.log(response.authResponse.accessToken);
+      // The response object is returned with a status field that lets the
+      // app know the current login status of the person.
+      // Full docs on the response object can be found in the documentation
+      // for FB.getLoginStatus().
+      if (response.status === 'connected') {
+        // Logged into your app and Facebook.
+        testAPI();
+      } else if (response.status === 'not_authorized') {
+        // The person is logged into Facebook, but not your app.
+        document.getElementById('status').innerHTML = 'Please log ' +
+          'into this app.';
+      } else {
+        // The person is not logged into Facebook, so we're not sure if
+        // they are logged into this app or not.
+        document.getElementById('status').innerHTML = 'Please log ' +
+          'into Facebook.';
+      }
+    }
+
+    // This function is called when someone finishes with the Login
+    // Button.  See the onlogin handler attached to it in the sample
+    // code below.
+    function checkLoginState() {
+      FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+      });
+    }
+
+    window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '552653164885695',
+      cookie     : true,  // enable cookies to allow the server to access 
+                          // the session
+      xfbml      : true,  // parse social plugins on this page
+      version    : 'v2.5' // use version 2.2
+    });
+
+    // Now that we've initialized the JavaScript SDK, we call 
+    // FB.getLoginStatus().  This function gets the state of the
+    // person visiting this page and can return one of three states to
+    // the callback you provide.  They can be:
+    //
+    // 1. Logged into your app ('connected')
+    // 2. Logged into Facebook, but not your app ('not_authorized')
+    // 3. Not logged into Facebook and can't tell if they are logged into
+    //    your app or not.
+    //
+    // These three cases are handled in the callback function.
+
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+
+    FB.Event.subscribe("auth.logout", function() {
+       window.location = '#/'
+    });
+
+    };
+
+    // Load the SDK asynchronously
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    // Here we run a very simple test of the Graph API after login is
+    // successful.  See statusChangeCallback() for when this call is made.
+    function testAPI() {
+      console.log('Welcome!  Fetching your information.... ');
+      FB.api('/me?fields=id,name,email,picture', function(response) {
+        console.log('Successful login for: ' + response.name);
+        document.getElementById('status').innerHTML =
+          'Thanks for logging in, ' + response.name + '!';
+        console.log(response);
+        console.log(response.picture.data.url);
+
+        xhttp.open("POST", "/users", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("name="+response.name+"&facebook_id="+response.id+"&profile_picture="+encodeURIComponent(response.picture.data.url)); 
+
+        xhttp.open("GET", "/users/"+response.id, true);
+        xhttp.send();
+
+        xhttp.onreadystatechange = function() {
+          if (xhttp.readyState == 4 && xhttp.status == 200) {
+            console.log("get request mofo "+JSON.parse(xhttp.responseText)["username"]);
+
+            document.getElementsByClassName("black-text").innerHTML = JSON.parse(xhttp.responseText)["username"];
+            //document.getElementById("demo").innerHTML = xhttp.responseText;
+          }
+        };
+
+        window.top.location = "#/profile";
+      });
+    }
+  </script>
+
+  <!--
+    Below we include the Login Button social plugin. This button uses
+    the JavaScript SDK to present a graphical Login button that triggers
+    the FB.login() function when clicked.
+  -->
+
+
   <h1>TasteBuds</h1>
   <!-- <h3>Welcome to TasteBuds</h3> -->
   <div class="navbar">
@@ -30,7 +146,15 @@
     <a class="btn profile" ui-sref="profile">Profile</a>
     <a class="btn want-to-try" ui-sref="wantToTry">Want to Try</a>
   </div>
-  <div ui-view></div>
+
+  <fb:login-button scope="public_profile,email" onlogin="checkLoginState();" data-size="xlarge" data-show-faces="true" data-auto-logout-link="true">
+  </fb:login-button>
+  <div id="status">
+  </div>
+
+  <div ui-view>
+  </div>
+
 <!-- <br>
 <br>
 <br>
@@ -49,10 +173,13 @@
     </footer>
   </div> -->
 
-  <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+  <!-- // <script src="../../bower_components/jquery/dist/jquery.min.js"></script> -->
+  <script src="bower_components/jquery/dist/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/js/materialize.min.js"></script>
-  <script src="./bower_components/angular/angular.min.js"></script>
-  <script src='./bower_components/angular-ui-router/release/angular-ui-router.min.js'></script>
+  <!-- // <script src="./bower_components/angular/angular.min.js"></script> -->
+  <script src="bower_components/angular/angular.min.js"></script>
+  <!-- // <script src='./bower_components/angular-ui-router/release/angular-ui-router.min.js'></script> -->
+  <script src='bower_components/angular-ui-router/release/angular-ui-router.min.js'></script>
   <script src='./js/module.js'></script>
 
 </body>

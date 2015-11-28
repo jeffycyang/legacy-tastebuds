@@ -7,11 +7,12 @@
     <div class="card-panel grey lighten-5 z-depth-1">
       <div class="row valign-wrapper">
         <div class="col s2 offset-s3">
-          <img src="http://i.imgur.com/OFoPkjY.jpg" alt="user" class="circle responsive-img">
+          <!-- <img src="http://i.imgur.com/OFoPkjY.jpg" alt="user" class="circle responsive-img"> -->
+
         </div>
 
         <div class="col s7">
-          <big><b>Avi Samloff</b><br></big>
+          <big><b>{{profile.username}}</b><br></big>
           <span class="black-text">
             I'm definitely a software engineer. #MakerSquare
           </span>
@@ -27,14 +28,15 @@
     <div class="row">
       <div class="container col l6 s6 right-align">
         <a ui-sref=".postList" class="btn waves-effect waves-light">
-          <i class="fa fa-th fa-4x">Posts</i></a>
-        </div>
-        <div class="container col l6 s6">
-          <a ui-sref=".eatList" class="btn waves-effect waves-light">
-            <i class="fa fa-cutlery fa-4x center-align">Eat me!</i></a>
-
-          </div>
-        </div>
-
-
+          <i class="fa fa-th fa-4x">Posts</i>
+        </a>
       </div>
+      <div class="container col l6 s6">
+          <a ui-sref=".eatList" class="btn waves-effect waves-light">
+            <i class="fa fa-cutlery fa-4x center-align">Eat me!</i>
+          </a>
+      </div>
+    </div>
+
+
+  </div>

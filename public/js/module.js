@@ -38,7 +38,7 @@ angular.module('tastebuds', [
     });
 })
 
-.controller('landingController', function($scope) {
+.controller('landingController', function($scope, $http) {
   $scope.message = 'lol the landingController works.';
 })
 
@@ -72,6 +72,16 @@ angular.module('tastebuds', [
         posts: [],
         wantToEat: []
     };
+    
+    //jeff's edit
+    // $scope.getUserInfo = $http.get({
+    //     method: 'GET',
+    //     url: '/users/' + $scope.id;
+    // }).then(function(){
+
+    // });
+    //
+
     $scope.getPosts = $http.get({
         method: 'GET',
         url: '/posts'
