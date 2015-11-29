@@ -23,7 +23,7 @@
 </head>
 <body style="text-align: center">
 
-  <script>
+  <!--<script>
     var xhttp=new XMLHttpRequest();
 
     // This is called with the results from from FB.getLoginStatus().
@@ -129,7 +129,7 @@
         window.top.location = "#/profile";
       });
     }
-  </script>
+  </script>-->
 
   <!--
     Below we include the Login Button social plugin. This button uses
@@ -147,10 +147,12 @@
     <a class="btn want-to-try" ui-sref="wantToTry">Want to Try</a>
   </div>
 
-  <fb:login-button scope="public_profile,email" onlogin="checkLoginState();" data-size="xlarge" data-show-faces="true" data-auto-logout-link="true">
-  </fb:login-button>
+  <!--<fb:login-button scope="public_profile,email" onlogin="checkLoginState();" data-size="xlarge" data-show-faces="true" data-auto-logout-link="true">
+  </fb:login-button>-->
   <div id="status">
   </div>
+
+  <facebook-login app-id="552653164885695"></facebook-login>
 
   <div ui-view>
   </div>
@@ -180,6 +182,7 @@
   <script src="bower_components/angular/angular.min.js"></script>
   <!-- // <script src='./bower_components/angular-ui-router/release/angular-ui-router.min.js'></script> -->
   <script src='bower_components/angular-ui-router/release/angular-ui-router.min.js'></script>
+  <script src='./js/facebook-oauth.js'></script>
   <script src='./js/module.js'></script>
 
 </body>

@@ -1,5 +1,6 @@
 angular.module('tastebuds', [
-  'ui.router'
+  'ui.router',
+  'angular.oauth.facebook'
 ])
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -36,6 +37,13 @@ angular.module('tastebuds', [
       url: '/wantToTry',
       templateUrl: '../views/want-to-try.html'
     });
+})
+
+//jeff adds facebook oauth
+.controller('AuthCtrl', function($scope, $http) {
+  $scope.$on('facebookAuthenticated', function(e, userInfo) {
+    console.log(userInfo);
+  });
 })
 
 .controller('landingController', function($scope, $http) {
