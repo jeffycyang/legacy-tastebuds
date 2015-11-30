@@ -7,7 +7,7 @@ var knex = require('knex')({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'legacydatabase',
+    database: 'tastebuds_db',
     charset: 'utf8'
   }
 });

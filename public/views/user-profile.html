@@ -13,13 +13,14 @@
   }
 </style>
 <div ng-controller="profileController" class="container user-profile">
+<!-- <div class="container user-profile"> -->
   <div class="row">
     <div class="col s12 center-align"></div>
   </div>
 
     <div class="profile-info">
-       <h4><b>{{ userProfile.name }}</b></h4>
-       <img src="http://i.imgur.com/OFoPkjY.jpg" alt="user" class="circle responsive-img">
+       <h4><b>{{ name }}</b></h4>
+       <img src="{{picture}}" alt="user" class="circle responsive-img">
 
         <div class="container col l6 s6 right-align">
           <a ui-sref=".postList" class="btn waves-effect waves-light">

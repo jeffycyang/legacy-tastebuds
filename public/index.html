@@ -30,7 +30,13 @@
     <a class="btn profile" ui-sref="profile">Profile</a>
     <a class="btn want-to-try" ui-sref="wantToTry">Want to Try</a>
   </div>
+
+  <div ng-controller="AuthCtrl" class="container user-profile">
+  <facebook-login app-id="552653164885695"></facebook-login>
+  <div>
+    
   <div ui-view></div>
+
 <!-- <br>
 <br>
 <br>
@@ -53,6 +59,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.2/js/materialize.min.js"></script>
   <script src="./bower_components/angular/angular.min.js"></script>
   <script src='./bower_components/angular-ui-router/release/angular-ui-router.min.js'></script>
+  <script src='./js/facebook-oauth.js'></script>
   <script src='./js/module.js'></script>
     <!-- // <script src='./js/script.js'></script> -->
 

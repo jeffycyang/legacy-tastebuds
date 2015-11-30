@@ -1,5 +1,6 @@
 angular.module('tastebuds', [
-  'ui.router'
+  'ui.router',
+  'angular.oauth.facebook'
 ])
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -34,6 +35,74 @@ angular.module('tastebuds', [
       templateUrl: '../views/want-to-try.html'
     });
 })
+/////////////
+.factory('AuthFac', function($http){
+  var data = {};
+  data.name;
+  data.id;
+  data.picture;
+  data.userInfo;
+  data.getPicture;
+
+  angular.element('[ng-controller=AuthCtrl]').scope().$on('facebookAuthenticated', function(e, userInfo) {
+    angular.element('[ng-controller=AuthCtrl]').scope().$evalAsync(function() {
+      data.name = userInfo.name;
+      data.id = userInfo.id;
+
+      console.log("GOD "+data.name+" "+data.id);
+
+      data.getPicture = function(){
+        return $http({
+          method: 'GET',
+          url: '/users/'+userInfo.id
+        }).then(function successCallback(response) {
+          console.log("successful get response "+JSON.stringify(response));
+          data.picture = decodeURIComponent(response.data.profile_picture);
+          console.log("i got your picture "+data.picture );
+        }, function errorCallback(response) {
+          console.log("failed to retrieve user");
+        });
+      }
+      data.getPicture();
+
+      // $http({
+      //   method: 'GET',
+      //   url: '/users/'+userInfo.id
+      // }).then(function successCallback(response) {
+      //   console.log("successful get response "+JSON.stringify(response));
+      //   data.picture = decodeURIComponent(response.data.profile_picture);
+      // }, function errorCallback(response) {
+      //   console.log("failed to retrieve user");
+      // });
+    });
+  });
+
+  return data;
+})
+
+//////////
+.controller('AuthCtrl', function($scope, $http, AuthFac) {
+  $scope.name=AuthFac.name;
+  $scope.id=AuthFac.id;
+  $scope.picture=AuthFac.picture;
+  // $scope.$on('facebookAuthenticated', function(e, userInfo) {
+  //   // console.log("userINFO "+userInfo.name);
+  //   $scope.$evalAsync(function() {
+  //     $scope.name = userInfo.name;
+  //     $scope.id = userInfo.id;
+  //     console.log("i'm here "+userInfo.id);
+  //     $http({
+  //       method: 'GET',
+  //       url: '/users/'+userInfo.id
+  //     }).then(function successCallback(response) {
+  //       console.log("successful get response "+JSON.stringify(response));
+  //       $scope.picture = decodeURIComponent(response.data.profile_picture);
+  //     }, function errorCallback(response) {
+  //       console.log("failed to retrieve user");
+  //     });
+  //   });
+  // });
+})
 
 .controller('landingController', function($scope) {
   $scope.message = 'lol the landingController works.';
@@ -64,16 +133,33 @@ angular.module('tastebuds', [
   }
 })
 
-.controller('profileController', function($scope, $http) {
+.controller('profileController', function($scope, $http, AuthFac) {
     // $http.get('/users/:id').success(function(data){
-    $http.get('/users/1').success(function(data){
+    // $http.get('/users/1').success(function(data){
+      console.log("SCOPE: " + AuthFac.id+" "+AuthFac.name+" "+AuthFac.picture);
+    $scope.name = AuthFac.name;
+    $scope.id = AuthFac.id;
+    $scope.picture = AuthFac.picture;
+
+    $scope.$evalAsync(function() {
+      $scope.name = AuthFac.name;
+      $scope.id = AuthFac.id;
+      $scope.picture = AuthFac.picture;
+    });
+
+    var slice = $scope.id.slice(0,6);
+    var idInt = parseInt(slice);
+
+    $http.get('/users/'+idInt).success(function(data){
+      console.log("PROFILE: " + data)
        $scope.userProfile = data;
     })
     .error(function(error){
        console.log('ERROR: ' + error);
     });
 
-    $http.get('/posts/user/1').success(function(data){
+    // $http.get('/posts/user/1').success(function(data){
+    $http.get('/posts/user/'+$scope.id).success(function(data){
        $scope.userPosts = data.data;
        console.log("inside user post", $scope.userPosts
         )
@@ -83,7 +169,7 @@ angular.module('tastebuds', [
     });
 })
 
-.controller('uploadController', function($scope, $http) {
+.controller('uploadController', function($scope, $http, AuthFac) {
     $('.recc .btn').click(function(){
       $scope.eat = true;
     })
@@ -97,16 +183,22 @@ angular.module('tastebuds', [
     var imgVar= $(".upload-file").prop('files')[0]['name'];
     $scope.imgTag ="assets/"+imgVar;
     console.log("IMGTAG: "+ $scope.imgTag);
+    console.log("SCOPE: " + AuthFac.id)
+    var slice = AuthFac.id.slice(0,6);
+    console.log("SLICE ONE: "+ slice);
+    var idInt = parseInt(slice);
+    console.log("INT: "+ idInt);
 
     var data = {
      location: $scope.location,
-     user_id: $scope.user_id,
+     user_id: idInt,
      restaurant_id: $scope.restaurant_id,
      post_image: $scope.imgTag,
      comment: $scope.comment,
      eat: $scope.eat
     }
 
+    console.log("HERERREEEEEE");
     $http.post('/posts', data).success(function(data, status){
       console.log('data2: ', data);
     })

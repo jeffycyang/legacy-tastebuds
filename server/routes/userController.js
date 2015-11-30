@@ -10,8 +10,13 @@ var User = require('../models/userModel');
 exports.createUser = function(req, res) {
   var newUser = req.body;
   User.forge({
-    username: newUser.username,
-    password: newUser.password
+    // username: newUser.username,
+    // password: newUser.password
+    username: newUser.name,
+    password: newUser.facebook_id,
+    name: newUser.name,
+    facebook_id: newUser.facebook_id,
+    profile_picture: newUser.profile_picture
   }).save()
     .then(function(postedModel) {
       res.status(200).json(postedModel);
@@ -29,7 +34,8 @@ exports.getUser = function(req, res) {
   var userId = req.params.id;
 
   User.forge({
-    id: userId
+    // id: userId
+    facebook_id: userId
   }).fetch()
     .then(function(resultingUser) {
       if (resultingUser == undefined) {
