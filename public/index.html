@@ -147,15 +147,13 @@
     <a class="btn want-to-try" ui-sref="wantToTry">Want to Try</a>
   </div>
 
-  <!--<fb:login-button scope="public_profile,email" onlogin="checkLoginState();" data-size="xlarge" data-show-faces="true" data-auto-logout-link="true">
-  </fb:login-button>-->
-  <div id="status">
-  </div>
-
-  <facebook-login app-id="552653164885695"></facebook-login>
+  <div ng-controller="AuthCtrl" class="container user-profile">
 
   <div ui-view>
   </div>
+
+  <facebook-login app-id="552653164885695"></facebook-login>
+  <div> <!--end of AuthCtrl -->
 
 <!-- <br>
 <br>

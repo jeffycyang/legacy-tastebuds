@@ -5,9 +5,10 @@ angular.module('angular.oauth.facebook', [])
 .directive('facebookLogin', function($http) {
   var 
     template = [
-      '<div class="pure-button button-info">',
+      '<div class="pure-button button-info" onclick="FB.logout()">',
         '<i class="fa fa-facebook"></i>',
-        '<span> Login with Facebook</span>',
+        // '<span> Login with Facebook</span>',
+        '<span id="status"></span>',  
       '</div>'
     ].join('');
 
@@ -29,9 +30,15 @@ angular.module('angular.oauth.facebook', [])
   function login(scope) {
     FB.login(function(response) {
       if ( response.status === 'connected' && response.authResponse ) {
-        FB.api('/me', function(response) { scope.$emit('facebookAuthenticated', response); });
+        testAPI();
+        FB.api('/me', function(response) { 
+          console.log("RES "+JSON.stringify(response));
+          scope.$emit('facebookAuthenticated', response); 
+        });
+        // testAPI();
       }
     }, { scope: 'email' });
+
   }
 
   function statusChangeCallback(response) {
@@ -47,39 +54,33 @@ angular.module('angular.oauth.facebook', [])
       testAPI();
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
-      document.getElementById('status').innerHTML = 'Please log ' +
+      document.getElementById('status').innerHTML = ' Please log ' +
         'into this app.';
     } else {
       // The person is not logged into Facebook, so we're not sure if
       // they are logged into this app or not.
-      document.getElementById('status').innerHTML = 'Please log ' +
+      document.getElementById('status').innerHTML = ' Please log ' +
         'into Facebook.';
     }
   }
 
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
   function testAPI() {
     console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me?fields=id,name,email,picture', function(response) {
+    FB.api('/me?fields=id,name,email,picture.type(large)', function(response) {
       console.log('Successful login for: ' + response.name);
       document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
+        ' Thanks for logging in, ' + response.name + '!';
       console.log(response);
       console.log(response.picture.data.url);
-
-      // xhttp.open("POST", "/users", true);
-      // xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      // xhttp.send("name="+response.name+"&facebook_id="+response.id+"&profile_picture="+encodeURIComponent(response.picture.data.url)); 
-
-      // xhttp.open("GET", "/users/"+response.id, true);
-      // xhttp.send();
-
-      // xhttp.onreadystatechange = function() {
-      //   if (xhttp.readyState == 4 && xhttp.status == 200) {
-      //     console.log("get request mofo "+JSON.parse(xhttp.responseText)["username"]);
-      //     //document.getElementsByClassName("black-text").innerHTML = JSON.parse(xhttp.responseText)["username"];
-      //     //document.getElementById("demo").innerHTML = xhttp.responseText;
-      //   }
-      // };
 
       $http({
         method: 'POST',
@@ -101,6 +102,8 @@ angular.module('angular.oauth.facebook', [])
         url: '/users/'+response.id
       }).then(function successCallback(response) {
           console.log("successful get response "+JSON.stringify(response));
+          // console.log("scope profile "+$scope.profile.username);
+          // $scope.profile.username = response.name;
       }, function errorCallback(response) {
           // called asynchronously if an error occurs
           // or server returns response with an error status.
@@ -108,6 +111,7 @@ angular.module('angular.oauth.facebook', [])
 
       window.top.location = "#/profile";
     });
+
   }
 
   return {
@@ -123,11 +127,28 @@ angular.module('angular.oauth.facebook', [])
 
         FB.getLoginStatus(function(response) {
           statusChangeCallback(response);
+          // scope.$emit('facebookAuthenticated', response);
+          if ( response.status === 'connected' && response.authResponse ) {
+            FB.api('/me', function(response) { 
+              console.log("RES "+JSON.stringify(response));
+              scope.$emit('facebookAuthenticated', response); 
+            });
+          }
+        });
+
+        FB.Event.subscribe("auth.logout", function(response) {
+          console.log(response.status);
+          if(response.status==='unknown'){
+            window.location = '#/';
+            document.getElementById('status').innerHTML = ' Please log ' + 'into Facebook.';
+          }
         });
 
       };
       // login
-      element.on('click', function() { login(scope); });
+      element.on('click', function() { 
+        login(scope); 
+      });
     }
   };
 })

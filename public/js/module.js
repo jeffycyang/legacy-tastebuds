@@ -41,8 +41,24 @@ angular.module('tastebuds', [
 
 //jeff adds facebook oauth
 .controller('AuthCtrl', function($scope, $http) {
+  $scope.name = '';
+  $scope.id;
+  $scope.picture;
   $scope.$on('facebookAuthenticated', function(e, userInfo) {
-    console.log(userInfo);
+    // console.log("userINFO "+userInfo.name);
+    $scope.$evalAsync(function() {
+      $scope.name = userInfo.name;
+      $scope.id = userInfo.id;
+      $http({
+        method: 'GET',
+        url: '/users/'+userInfo.id
+      }).then(function successCallback(response) {
+        console.log("successful get response "+JSON.stringify(response));
+        $scope.picture = decodeURIComponent(response.data.profile_picture);
+      }, function errorCallback(response) {
+        console.log("failed to retrieve user");
+      });
+    });
   });
 })
 
@@ -84,9 +100,9 @@ angular.module('tastebuds', [
     //jeff's edit
     // $scope.getUserInfo = $http.get({
     //     method: 'GET',
-    //     url: '/users/' + $scope.id;
-    // }).then(function(){
-
+    //     url: '/users/' + $scope.id
+    // }).then(function(data){
+    //     console.log("user data "+data);
     // });
     //
 
